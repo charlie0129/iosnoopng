@@ -2,6 +2,10 @@
 
 Monitor disk activity on your Mac. Like iosnoop but with a Web GUI, intended to be run as a daemon.
 
+How is it different from the Disk tab of Activity Monitor? Activity Monitor can only show process that are currently running. However, iosnoopng can collect metrics from **transient processes** that are not shown in Activity Monitor (i.e. process that is not long-running, like your C compilers). It can also show the read and write bytes of each process to each file.
+
+## Screenshots
+
 You can view the total write and read bytes of each process.
 
 <img src="img/overview.png" alt="Overview" width="575" />
@@ -41,3 +45,6 @@ Command line options:
 - `-a`: Listen address (default "127.0.0.1:8092")
 - `-l`: Log level (default "info")
 - `-o`: Save raw dtrace output to a file (default "")
+
+> [!WARNING]
+> Before quitting iosnoopng, **make sure your Mac have NOT slept**, due to the same reason mentioned above. If your Mac has not slept, you can safely quit iosnoopng. However, if your Mac has slept, quitting iosnoopng may cause a system freeze. Either let iosnoopng running or save your work and **force** reboot your Mac.
