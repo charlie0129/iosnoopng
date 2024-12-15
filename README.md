@@ -4,11 +4,11 @@ Like iosnoop but with a Web GUI, intended to be run as a daemon.
 
 You can view the total write and read bytes of each process.
 
-![Overview](img/overview.png)
+<img src="img/overview.png" alt="Overview" width="575" />
 
 And the read and write bytes of each process to each file.
 
-![Process Details](img/process.png)
+<img src="img/process.png" alt="Process Details" width="575" />
 
 ## Build
 
@@ -26,7 +26,7 @@ make
 ## Usage (macOS)
 
 > [!WARNING]
-> Make sure your Mac **has NOT slept since last boot**, otherwise you will certainly have a system freeze. If you are not sure, reboot your Mac now. Otherwise, save your work and be prepared for a system freeze if it happens.
+> **Make sure your Mac has NOT slept since last boot**, otherwise you will certainly have a system freeze. If you are not sure, reboot your Mac now. Otherwise, save your work and be prepared for a system freeze if it happens.
 > 
 > This tool uses dtrace internally. Due to an issue the darwin kernel, if your Mac has slept since the last boot, running dtrace may cause a system freeze. This is an issue with the darwin kernel and I have no control over it. See [this](https://forums.developer.apple.com/forums/thread/735939) .
 > 
