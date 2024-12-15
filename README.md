@@ -1,6 +1,6 @@
 # iosnoopng
 
-Like iosnoop but with a Web GUI, intended to be run as a daemon.
+Monitor disk activity on your Mac. Like iosnoop but with a Web GUI, intended to be run as a daemon.
 
 You can view the total write and read bytes of each process.
 
