@@ -23,7 +23,7 @@ npm i
 make
 ```
 
-## Prerequisites
+## Prerequisites (macOS)
 
 1. Disable SIP (System Integrity Protection) by booting into recovery mode and running `csrutil disable`.
 
@@ -48,3 +48,7 @@ Command line options:
 
 > [!WARNING]
 > Before quitting iosnoopng, **make sure your Mac have NOT slept**, due to the same reason mentioned above. If your Mac has not slept, you can safely quit iosnoopng. However, if your Mac has slept, quitting iosnoopng may cause a system freeze. Either let iosnoopng running or save your work and **force** reboot your Mac.
+
+## Extra Considerations
+
+- Since iosnoopng records paths of files, its memory usage may grow over time.
