@@ -61,7 +61,7 @@ function MetaPage() {
 
         <tbody>
           {
-            stats.map((stat: statType) => (
+            stats.slice(0, 1000).map((stat: statType) => (
               <tr key={stat.exec}>
                 <td><Link to={`/${stat.exec}`}>{stat.exec}</Link></td>
                 <td>{utils.humanFileSize(stat.writes)}</td>
@@ -71,6 +71,11 @@ function MetaPage() {
           }
         </tbody>
       </table>
+      {
+        stats.length >= 1000 ?
+          <p>Displaying 1000 of {stats.length} entries.</p>
+          : null
+      }
     </>
   )
 }
