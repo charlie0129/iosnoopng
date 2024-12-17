@@ -35,14 +35,14 @@ function ProcessPage() {
       const stats = await req.getProcessStats(exec)
       let statsArray: statType[] = []
       for (const [path, stat] of Object.entries(stats)) {
-        statsArray.push({path, writes: stat.writes, reads: stat.reads})
+        statsArray.push({ path, writes: stat.writes, reads: stat.reads })
       }
       setStats(sortStats(statsArray, sortBy))
     })()
   }, [])
 
   useEffect(() => {
-    setStats(sortStats(stats, sortBy ))
+    setStats(sortStats(stats, sortBy))
   }, [sortBy])
 
   return (
@@ -55,15 +55,15 @@ function ProcessPage() {
       <table id="process-table">
         <thead>
           <tr>
-            <th onClick={() => {setSortBy("exec")}}>Path</th>
-            <th onClick={() => {setSortBy("writes")}}>Data Written</th>
-            <th onClick={() => {setSortBy("reads")}}>Data Read</th>
+            <th onClick={() => { setSortBy("exec") }}>Path</th>
+            <th onClick={() => { setSortBy("writes") }}>Data Written</th>
+            <th onClick={() => { setSortBy("reads") }}>Data Read</th>
           </tr>
         </thead>
 
         <tbody>
           {
-            stats.map((stat: statType) => (
+            stats.slice(0, 1000).map((stat: statType) => (
               <tr key={stat.path}>
                 <td>{stat.path}</td>
                 <td>{utils.humanFileSize(stat.writes)}</td>
@@ -73,6 +73,11 @@ function ProcessPage() {
           }
         </tbody>
       </table>
+      {
+        stats.length >= 1000 ?
+          <p>Displaying 1000 of {stats.length} entries.</p>
+          : null
+      }
     </>
   )
 }
