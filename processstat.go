@@ -105,7 +105,9 @@ func (ps *ProcessStat) MergeSmallEntries() {
 		deleteSum += len(paths)
 	}
 
-	logrus.Infof("Merged %d entries, deleted %d entries", mergeSum, deleteSum)
+	if mergeSum > 0 || deleteSum > 0 {
+		logrus.Debugf("Merged %d entries, deleted %d entries", mergeSum, deleteSum)
+	}
 }
 
 func (ps *ProcessStat) Add(in *IosnoopOutput) {

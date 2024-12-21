@@ -81,7 +81,7 @@ func readStdout(stdout io.Reader) {
 			continue
 		}
 
-		logrus.WithField("output", output).Debug("Parsed iosnoop output")
+		logrus.WithField("output", output).Trace("Parsed iosnoop output")
 		processStat.Add(output)
 	}
 
