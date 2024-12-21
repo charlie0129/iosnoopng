@@ -91,9 +91,11 @@ func (ps *ProcessStat) MergeSmallEntries() {
 			rw := ps.Details[exec][path]
 			mergedRW.Reads += rw.Reads
 			mergedRW.Writes += rw.Writes
+			if rw.LastUpdated.After(mergedRW.LastUpdated) {
+				mergedRW.LastUpdated = rw.LastUpdated
+			}
 		}
 
-		mergedRW.LastUpdated = time.Now()
 		mergeSum += len(paths)
 	}
 
