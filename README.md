@@ -47,7 +47,7 @@ Command line options:
 - `-l`: Log level (default "info")
 - `-o`: Save raw dtrace output to a file (default "")
 - `-r`: Replay previous log file before collecting new data
-- `-s`: Only merge entries that are not updated than this number of seconds. (default 86400)
+- `-s`: Only merge entries that are not updated than this number of seconds. (default 3600)
 - `-t`: Merge R/W smaller than this number of bytes into a single entry. This is useful for processes that write to many small files to save memory and make the output more readable. (default 33554432)
 
 > [!WARNING]
