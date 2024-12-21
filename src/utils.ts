@@ -29,26 +29,32 @@ function timeSince(date: Date): string {
     var interval = seconds / 31536000;
 
     if (interval > 1) {
-        return Math.floor(interval) + " years" + suffix;
+        const floored = Math.floor(interval);
+        return floored + " year" + (floored > 1 ? 's' : '') + suffix;
     }
     interval = seconds / 2592000;
     if (interval > 1) {
-        return Math.floor(interval) + " months" + suffix;
+        const floored = Math.floor(interval);
+        return floored + " month" + (floored > 1 ? 's' : '') + suffix;
     }
     interval = seconds / 86400;
     if (interval > 1) {
-        return Math.floor(interval) + " days" + suffix;
+        const floored = Math.floor(interval);
+        return floored + " day" + (floored > 1 ? 's' : '') + suffix;
     }
     interval = seconds / 3600;
     if (interval > 1) {
-        return Math.floor(interval) + " hours" + suffix;
+        const floored = Math.floor(interval);
+        return floored + " hour" + (floored > 1 ? 's' : '') + suffix;
     }
     interval = seconds / 60;
     if (interval > 1) {
-        return Math.floor(interval) + " minutes" + suffix;
+        const floored = Math.floor(interval);
+        return floored + " minute" + (floored > 1 ? 's' : '') + suffix;
     }
 
-    return Math.floor(seconds) + " second" + (seconds > 1 ? 's' : '') + suffix;
+    const floored = Math.floor(seconds);
+    return floored + " second" + (floored > 1 ? 's' : '') + suffix;
 }
 
 function useInterval(callback: () => void, delay: number | null) {
