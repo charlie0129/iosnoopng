@@ -8,11 +8,11 @@ How is it different from the Disk tab of Activity Monitor? Activity Monitor can 
 
 You can view the total write and read bytes of each process.
 
-<img src="img/overview.png" alt="Overview" width="575" />
+<img width="705" alt="Total" src="https://github.com/user-attachments/assets/9d857e33-8735-4106-bc12-efaaf7b96393" />
 
 And the read and write bytes of each process to each file.
 
-<img src="img/process.png" alt="Process Details" width="575" />
+<img width="705" alt="Process" src="https://github.com/user-attachments/assets/d297044c-8242-4b49-bfb6-54b7ecb1d749" />
 
 ## Build
 
