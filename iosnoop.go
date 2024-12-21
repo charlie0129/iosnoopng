@@ -50,7 +50,7 @@ func readStderr(stderr io.Reader) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		logrus.Fatalf("failed to scan iosnoop stderr: %s", err)
+		logrus.Fatalf("Failed to scan iosnoop stderr: %s", err)
 	}
 }
 
@@ -59,7 +59,7 @@ func readStdout(stdout io.Reader) {
 	if rawLogOutput != "" {
 		f, err := os.OpenFile(rawLogOutput, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logrus.Fatalf("failed to open raw log output: %s", err)
+			logrus.Fatalf("Failed to open raw log output: %s", err)
 		}
 		defer f.Close()
 		fWriter = f
@@ -71,21 +71,21 @@ func readStdout(stdout io.Reader) {
 
 		if fWriter != nil {
 			if _, err := fWriter.Write([]byte(line + "\n")); err != nil {
-				logrus.Warnf("failed to write to raw log output: %s", err)
+				logrus.Warnf("Failed to write to raw log output: %s", err)
 			}
 		}
 
 		output, err := NewIosnoopOutput(line)
 		if err != nil {
-			logrus.Warnf("failed to parse iosnoop output: %s", err)
+			logrus.Warnf("Failed to parse iosnoop output: %s", err)
 			continue
 		}
 
-		logrus.WithField("output", output).Debug("parsed iosnoop output")
+		logrus.WithField("output", output).Debug("Parsed iosnoop output")
 		processStat.Add(output)
 	}
 
 	if err := scanner.Err(); err != nil {
-		logrus.Fatalf("failed to scan iosnoop output: %s", err)
+		logrus.Fatalf("Failed to scan iosnoop output: %s", err)
 	}
 }

@@ -10,10 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type dataType struct {
-	ProcessStat *ProcessStat
-}
-
 //go:embed dist
 var static embed.FS
 
@@ -38,6 +34,16 @@ func httpServer() {
 	http.HandleFunc("/api/stats/{exec}", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		exec := r.PathValue("exec")
 		stats := processStat.GetDetailsByProcess(exec)
+		err := json.NewEncoder(w).Encode(stats)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+			return
+		}
+	}))
+
+	http.HandleFunc("/api/stats-full", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+		stats := processStat.GetAll()
 		err := json.NewEncoder(w).Encode(stats)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

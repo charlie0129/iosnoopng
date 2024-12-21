@@ -1,6 +1,7 @@
 interface RWStat {
     writes: number;
     reads: number;
+    lastUpdated: string;
 }
 
 interface Meta {
@@ -9,7 +10,7 @@ interface Meta {
 
 interface Stats {
     events: number;
-    processStatsMeta: Meta;
+    processStats: Meta;
 }
 
 interface ProcessStat {

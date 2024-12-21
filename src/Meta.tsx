@@ -7,12 +7,14 @@ interface statType {
   exec: string;
   writes: number;
   reads: number;
+  lastUpdated: Date;
 }
 
 function MetaPage() {
   const [stats, setStats] = useState<statType[]>([])
   const [events, setEvents] = useState<number>(0)
   const [sortBy, setSortBy] = useState<string>('writes')
+  const [autoRefresh, setAutoRefresh] = useState<boolean>(true)
 
   function sortStats(stats: statType[], sortBy: string): statType[] {
     const statsCopy = [...stats]
@@ -27,16 +29,24 @@ function MetaPage() {
     })
   }
 
+  async function refreshStats() {
+    const stats = await req.getStats()
+    setEvents(stats.events)
+    let statsArray: statType[] = []
+    for (const [exec, stat] of Object.entries(stats.processStats)) {
+      statsArray.push({ exec, writes: stat.writes, reads: stat.reads, lastUpdated: new Date(stat.lastUpdated) })
+    }
+    setStats(sortStats(statsArray, sortBy))
+  }
+
+  utils.useInterval(() => {
+    if (autoRefresh) {
+      refreshStats()
+    }
+  }, autoRefresh ? 2000 : null);
+
   useEffect(() => {
-    (async () => {
-      const stats = await req.getStats()
-      setEvents(stats.events)
-      let statsArray: statType[] = []
-      for (const [exec, stat] of Object.entries(stats.processStatsMeta)) {
-        statsArray.push({ exec, writes: stat.writes, reads: stat.reads })
-      }
-      setStats(sortStats(statsArray, sortBy))
-    })()
+    refreshStats()
   }, [])
 
   useEffect(() => {
@@ -48,14 +58,16 @@ function MetaPage() {
       <p>
         <span>Events: {events}</span>&nbsp;&nbsp;&nbsp;
         <span>Writes: {utils.humanFileSize(stats.reduce((acc, stat) => acc + stat.writes, 0))}</span>&nbsp;&nbsp;&nbsp;
-        <span>Reads: {utils.humanFileSize(stats.reduce((acc, stat) => acc + stat.reads, 0))}</span>
+        <span>Reads: {utils.humanFileSize(stats.reduce((acc, stat) => acc + stat.reads, 0))}</span>&nbsp;&nbsp;&nbsp;
+        <span onClick={() => { setAutoRefresh(!autoRefresh) }} style={{ cursor: "pointer", color: autoRefresh ? "green" : "black" }}>Auto Refresh {autoRefresh ? "On" : "Off"}</span>
       </p>
       <table id="stats-table">
         <thead>
           <tr>
-            <th onClick={() => { setSortBy("exec") }}>Process Name</th>
-            <th onClick={() => { setSortBy("writes") }}>Data Written</th>
-            <th onClick={() => { setSortBy("reads") }}>Data Read</th>
+            <th onClick={() => { setSortBy("exec") }}>Process Name&nbsp;&nbsp;</th>
+            <th onClick={() => { setSortBy("writes") }}>Data Written&nbsp;&nbsp;</th>
+            <th onClick={() => { setSortBy("reads") }}>Data Read&nbsp;&nbsp;</th>
+            <th>Last Updated</th>
           </tr>
         </thead>
 
@@ -66,6 +78,7 @@ function MetaPage() {
                 <td><Link to={`/${stat.exec}`}>{stat.exec}</Link></td>
                 <td>{utils.humanFileSize(stat.writes)}</td>
                 <td>{utils.humanFileSize(stat.reads)}</td>
+                <td>{utils.timeSince(stat.lastUpdated)}</td>
               </tr>
             ))
           }
