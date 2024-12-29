@@ -39,6 +39,18 @@ function MetaPage() {
     setStats(sortStats(statsArray, sortBy))
   }
 
+  async function resetStats() {
+    if (confirm("Confirm reset?")) {
+      await req.resetStats()
+      await refreshStats()
+    }
+  }
+
+  async function deleteProcess(exec: string) {
+    await req.deleteByProcess(exec)
+    await refreshStats()
+  }
+
   utils.useInterval(() => {
     if (autoRefresh) {
       refreshStats()
@@ -59,7 +71,8 @@ function MetaPage() {
         <span>Events: {events}</span>&nbsp;&nbsp;&nbsp;
         <span>Writes: {utils.humanFileSize(stats.reduce((acc, stat) => acc + stat.writes, 0))}</span>&nbsp;&nbsp;&nbsp;
         <span>Reads: {utils.humanFileSize(stats.reduce((acc, stat) => acc + stat.reads, 0))}</span>&nbsp;&nbsp;&nbsp;
-        <span onClick={() => { setAutoRefresh(!autoRefresh) }} style={{ cursor: "pointer", color: autoRefresh ? "green" : "black" }}>Auto Refresh {autoRefresh ? "On" : "Off"}</span>
+        <span onClick={() => { setAutoRefresh(!autoRefresh) }} style={{ cursor: "pointer", color: autoRefresh ? "green" : "black" }}>Auto Refresh {autoRefresh ? "On" : "Off"}</span>&nbsp;&nbsp;&nbsp;
+        <span onClick={() => { resetStats() }} style={{ cursor: "pointer", color: "red" }}>Reset Stats</span>
       </p>
       <table id="stats-table">
         <thead>
@@ -68,6 +81,7 @@ function MetaPage() {
             <th onClick={() => { setSortBy("writes") }}>Data Written&nbsp;&nbsp;</th>
             <th onClick={() => { setSortBy("reads") }}>Data Read&nbsp;&nbsp;</th>
             <th>Last Updated</th>
+            <th>Operation</th>
           </tr>
         </thead>
 
@@ -79,6 +93,7 @@ function MetaPage() {
                 <td>{utils.humanFileSize(stat.writes)}</td>
                 <td>{utils.humanFileSize(stat.reads)}</td>
                 <td>{utils.timeSince(stat.lastUpdated)}</td>
+                <td><button onClick={() => { deleteProcess(stat.exec) }}>X</button></td>
               </tr>
             ))
           }

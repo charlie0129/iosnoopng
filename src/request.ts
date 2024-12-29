@@ -16,4 +16,18 @@ async function getProcessStats(exec: string): Promise<Meta> {
     return response.json();
 }
 
-export default { getStats, getProcessStats };
+async function resetStats(): Promise<void> {
+    const response = await fetch('/api/stats', { method: 'DELETE' });
+    if (!response.ok) {
+        throw new Error('Failed to reset stats');
+    }
+}
+
+async function deleteByProcess(exec: string) {
+    const response = await fetch(`/api/stats/${exec}`, { method: 'DELETE' });
+    if (!response.ok) {
+        throw new Error('Failed to delete process stats');
+    }
+}
+
+export default { getStats, getProcessStats, resetStats, deleteByProcess };

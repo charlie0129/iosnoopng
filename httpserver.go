@@ -21,7 +21,7 @@ func httpServer() {
 
 	httpStaticFS := http.FileServerFS(f)
 
-	http.HandleFunc("/api/stats", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /api/stats", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		stats := processStat.GetMeta()
 		err := json.NewEncoder(w).Encode(stats)
 		if err != nil {
@@ -31,7 +31,12 @@ func httpServer() {
 		}
 	}))
 
-	http.HandleFunc("/api/stats/{exec}", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("DELETE /api/stats", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+		processStat.Clear()
+		w.WriteHeader(http.StatusNoContent)
+	}))
+
+	http.HandleFunc("GET /api/stats/{exec}", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		exec := r.PathValue("exec")
 		stats := processStat.GetDetailsByProcess(exec)
 		err := json.NewEncoder(w).Encode(stats)
@@ -42,7 +47,14 @@ func httpServer() {
 		}
 	}))
 
-	http.HandleFunc("/api/stats-full", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("DELETE /api/stats/{exec}", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+		exec := r.PathValue("exec")
+		processStat.DeleteByProcess(exec)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}))
+
+	http.HandleFunc("GET /api/stats-full", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		stats := processStat.GetAll()
 		err := json.NewEncoder(w).Encode(stats)
 		if err != nil {
@@ -52,12 +64,12 @@ func httpServer() {
 		}
 	}))
 
-	http.HandleFunc("/assets/", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /assets/", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Cache-Control", "public, max-age=2592000")
 		httpStaticFS.ServeHTTP(w, r)
 	}))
 
-	http.HandleFunc("/", WithLogging(func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("GET /", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path = "/"
 		httpStaticFS.ServeHTTP(w, r)
 	}))

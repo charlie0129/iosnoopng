@@ -2,7 +2,9 @@ package main
 
 import (
 	_ "embed"
+	"encoding/json"
 	"flag"
+	"os"
 	"sync"
 	"time"
 
@@ -17,6 +19,8 @@ var (
 	dedupLaunchd             = false
 	mergeSmallFilesThreshold = 32 * 1024 * 1024 // 32MB
 	mergeMinStaleTime        = 60 * 60          // 1h
+	processStatFile          = ""
+	doNotRunDtrace           = false
 )
 
 func main() {
@@ -26,7 +30,9 @@ func main() {
 	flag.BoolVar(&replayLog, "r", replayLog, "Replay previous log file before collecting new data")
 	flag.BoolVar(&dedupLaunchd, "d", dedupLaunchd, "Deduplicate launchd processes. Since launchd writes on behalf of other processes if the same file is written by another process it will be counted twice. This option removes the duplicated entries from launchd.")
 	flag.IntVar(&mergeSmallFilesThreshold, "t", mergeSmallFilesThreshold, "Merge R/W smaller than this number of bytes into a single entry. This is useful for processes that write to many small files to save memory and make the output more readable.")
-	flag.IntVar(&mergeMinStaleTime, "s", mergeMinStaleTime, "Only merge entries that are not updated than this number of seconds.")
+	flag.IntVar(&mergeMinStaleTime, "s", mergeMinStaleTime, "Only merge entries that are not updated more than this number of seconds.")
+	flag.StringVar(&processStatFile, "f", processStatFile, "Load previously saved process stat file as startpoint")
+	flag.BoolVar(&doNotRunDtrace, "n", doNotRunDtrace, "Do not run dtrace, only start the HTTP server")
 	flag.Parse()
 
 	level, err := logrus.ParseLevel(logLevel)
@@ -49,24 +55,41 @@ func main() {
 		}
 	}
 
-	go func() {
-		sleepTime := 60
-		if mergeMinStaleTime < sleepTime {
-			sleepTime = mergeMinStaleTime
+	if processStatFile != "" {
+		logrus.Infof("Loading process stat file: %s", processStatFile)
+		f, err := os.Open(processStatFile)
+		if err != nil {
+			logrus.Fatalf("Failed to open process stat file: %s", err)
 		}
-		for {
-			time.Sleep(time.Duration(sleepTime) * time.Second)
-			processStat.MergeSmallEntries()
+		defer f.Close()
+		err = json.NewDecoder(f).Decode(&processStat)
+		if err != nil {
+			logrus.Fatalf("Failed to decode process stat file: %s", err)
 		}
-	}()
+	}
+
+	if !doNotRunDtrace {
+		go func() {
+			sleepTime := 60
+			if mergeMinStaleTime < sleepTime {
+				sleepTime = mergeMinStaleTime
+			}
+			for {
+				time.Sleep(time.Duration(sleepTime) * time.Second)
+				processStat.MergeSmallEntries()
+			}
+		}()
+	}
 
 	wg := sync.WaitGroup{}
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		runIosnoop()
-	}()
+	if !doNotRunDtrace {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			runIosnoop()
+		}()
+	}
 
 	wg.Add(1)
 	go func() {

@@ -51,6 +51,14 @@ func NewProcessStat() *ProcessStat {
 	return ret
 }
 
+func (ps *ProcessStat) Clear() {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
+	ps.Details = make(map[string]map[string]*RWStat)
+	ps.Events = 0
+}
+
 func (ps *ProcessStat) MergeSmallEntries() {
 	ps.mu.Lock()
 	defer ps.mu.Unlock()
@@ -195,23 +203,33 @@ func (ps *ProcessStat) GetDetailsByProcess(processName string) map[string]*RWSta
 	return ret
 }
 
-func (ps *ProcessStat) GetAll() map[string]map[string]*RWStat {
+func (ps *ProcessStat) DeleteByProcess(processName string) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+
+	delete(ps.Details, processName)
+}
+
+func (ps *ProcessStat) GetAll() *ProcessStat {
 	ps.mu.RLock()
 	defer ps.mu.RUnlock()
 
-	ret := make(map[string]map[string]*RWStat, len(ps.Details))
+	details := make(map[string]map[string]*RWStat, len(ps.Details))
 	for exec, pathRW := range ps.Details {
 		needDedup := dedupLaunchd && exec == "launchd"
-		ret[exec] = make(map[string]*RWStat, len(pathRW))
+		details[exec] = make(map[string]*RWStat, len(pathRW))
 		for path, rw := range pathRW {
 			if needDedup && ps.isPathExistsInNonLaunchd(path) {
 				continue
 			}
 			newRW := &RWStat{}
 			newRW.CopyFrom(rw)
-			ret[exec][path] = newRW
+			details[exec][path] = newRW
 		}
 	}
 
-	return ret
+	return &ProcessStat{
+		Details: details,
+		Events:  ps.Events,
+	}
 }

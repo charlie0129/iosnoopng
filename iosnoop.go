@@ -81,7 +81,10 @@ func readStdout(stdout io.Reader) {
 			continue
 		}
 
-		logrus.WithField("output", output).Trace("Parsed iosnoop output")
+		if logrus.IsLevelEnabled(logrus.TraceLevel) {
+			logrus.WithField("output", output).Trace("Parsed iosnoop output")
+		}
+
 		processStat.Add(output)
 	}
 
