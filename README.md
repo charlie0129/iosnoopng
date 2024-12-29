@@ -8,11 +8,11 @@ How is it different from the Disk tab of Activity Monitor? Activity Monitor can 
 
 You can view the total write and read bytes of each process.
 
-<img width="705" alt="Total" src="https://github.com/user-attachments/assets/9d857e33-8735-4106-bc12-efaaf7b96393" />
+<img width="998" alt="Total" src="https://github.com/user-attachments/assets/ff53ac2a-3cb0-4fef-9343-19878a12b0f3" />
 
 And the read and write bytes of each process to each file.
 
-<img width="705" alt="Process" src="https://github.com/user-attachments/assets/d297044c-8242-4b49-bfb6-54b7ecb1d749" />
+<img width="998" alt="Process" src="https://github.com/user-attachments/assets/636eb391-af80-4105-ad0b-7d111269a86a" />
 
 ## Build
 
@@ -56,3 +56,4 @@ Command line options:
 ## Extra Considerations
 
 - Since iosnoopng records paths of files, its memory usage may grow over time. However, it should not be a problem for most users because iosnoopng has small-files-merging enabled by default. So lots of small files will be merged into one entry to save memory.
+- The full path is not reported on macOS (only part of it). You will see every file starting with `/` even if the file is not there. This is a limitation of dtrace on macOS. For example, if you see a file `/idindex/IdIndex_inputs_i`, it is not in the root directory. If you need to find its full path, you can use `find . -name IdIndex_inputs_i` to find it. In my case, it is `$HOME/Library/Caches/JetBrains/GoLand2024.2/index/idindex/IdIndex.storage_i`
