@@ -86,6 +86,11 @@ func readStdout(stdout io.Reader) {
 		}
 
 		processStat.Add(output)
+		if output.IsRead {
+			CountRead(output.ExecName, output.OperationSize)
+		} else {
+			CountWrite(output.ExecName, output.OperationSize)
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

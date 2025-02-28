@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/VictoriaMetrics/metrics"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,6 +21,11 @@ func httpServer() {
 	}
 
 	httpStaticFS := http.FileServerFS(f)
+
+	// Expose the registered metrics at `/metrics` path.
+	http.HandleFunc("GET /metrics", func(w http.ResponseWriter, req *http.Request) {
+		metrics.WritePrometheus(w, false)
+	})
 
 	http.HandleFunc("GET /api/stats", WithLogging(func(w http.ResponseWriter, r *http.Request) {
 		stats := processStat.GetMeta()

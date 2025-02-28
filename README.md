@@ -2,7 +2,7 @@
 
 Monitor disk activity on your Mac. Like iosnoop but with a Web GUI, intended to be run as a daemon.
 
-How is it different from the Disk tab of Activity Monitor? Activity Monitor can only show process that are currently running. However, iosnoopng can collect metrics from **transient processes** that are not shown in Activity Monitor (i.e. process that is not long-running, like your C compilers). It can also show the read and write bytes of each process to each file.
+How is it different from the Disk tab of Activity Monitor? Activity Monitor can only show process that are currently running. However, iosnoopng can collect metrics from **transient processes** that are not shown in Activity Monitor (i.e. process that is not long-running, like your C compilers). It can also show the read and write bytes of each process to each file. It also has a Prometheus metrics endpoint so you can scrape the data using Prometheus and visualize it in Grafana.
 
 ## Screenshots
 
@@ -13,6 +13,10 @@ You can view the total write and read bytes of each process.
 And the read and write bytes of each process to each file.
 
 <img width="998" alt="Process" src="https://github.com/user-attachments/assets/636eb391-af80-4105-ad0b-7d111269a86a" />
+
+Or use Grafana to visualize results:
+
+<img width="1309" alt="Grafana" src="https://github.com/user-attachments/assets/cd724bce-5c00-46ec-ab49-29fdc35aed03" />
 
 ## Build
 
