@@ -16,7 +16,7 @@ And the read and write bytes of each process to each file.
 
 Or use Grafana to visualize results:
 
-<img width="1309" alt="Grafana" src="https://github.com/user-attachments/assets/cd724bce-5c00-46ec-ab49-29fdc35aed03" />
+<img width="1627" alt="image" src="https://github.com/user-attachments/assets/40d91a59-7d3b-414c-9450-bbfa55e88c26" />
 
 ## Build
 
@@ -61,3 +61,17 @@ Command line options:
 
 - Since iosnoopng records paths of files, its memory usage may grow over time. However, it should not be a problem for most users because iosnoopng has small-files-merging enabled by default. So lots of small files will be merged into one entry to save memory.
 - The full path is not reported on macOS (only part of it). You will see every file starting with `/` even if the file is not there. This is a limitation of dtrace on macOS. For example, if you see a file `/idindex/IdIndex_inputs_i`, it is not in the root directory. If you need to find its full path, you can use `find . -name IdIndex_inputs_i` to find it. In my case, it is `$HOME/Library/Caches/JetBrains/GoLand2024.2/index/idindex/IdIndex.storage_i`
+
+## Scraping Metrics with Prometheus and Visualizing with Grafana
+
+You can scrape the metrics with Prometheus. Here is an example configuration:
+
+```yaml
+scrape_configs:
+  - job_name: "iosnoopng"
+    static_configs:
+    - targets: ["127.0.0.1:8092"]
+```
+You will see metrics names like `iosnoopng_read_bytes_total` and `iosnoopng_written_bytes_total`.
+
+Once you have Grafana and Prometheus set up, you can import the example dashboard from `dashboards/process-read-and-writes.json`.
